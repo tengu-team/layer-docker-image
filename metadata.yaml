@@ -1,0 +1,12 @@
+name: docker-image
+summary: installs a docker image
+maintainer: Gregory Van Seghbroeck <gregory.vanseghbroeck@ugent.be>
+description: |
+  This charm installs a docker image. By connecting this charm to a
+  docker host, it will get started.
+subordinate: false
+requires:
+  dockerhost:
+    interface: docker-image-host
+tags: ['containers']
+series: ['xenial']
