@@ -51,7 +51,6 @@ def host_connected(dh_relation):
     print("Different")
     remove_state('docker-image.ready')
     log('config.changed.image, generating new UUID')
-    uuid = str(uuid4())
     container_request = {
         'image': conf.get('image'),
         'unit': os.environ['JUJU_UNIT_NAME'] 
@@ -66,11 +65,11 @@ def host_connected(dh_relation):
         if secret == '':
             status_set('blocked', 'If you provide a username, you should also set the secret.')
             return
-        container_request.username = username
-        container_request.secret = secret
+        container_request['username'] = username
+        container_request['secret'] = secret
 
     unitdata.kv().set('image', container_request)
-    dh_relation.send_container_requests({uuid: container_request})
+    dh_relation.send_container_requests([container_request])
     status_set('waiting', 'Waiting for docker to spin up image ({}).'.format(conf.get('image')))
 
 
