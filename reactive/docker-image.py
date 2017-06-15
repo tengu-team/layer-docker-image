@@ -18,6 +18,7 @@ from time import sleep
 from uuid import uuid4
 import requests
 import os
+import yaml
 
 from charmhelpers.core import hookenv, unitdata
 from charmhelpers.core.hookenv import status_set, log
@@ -53,7 +54,7 @@ def host_connected(dh_relation):
     log('config.changed.image, generating new UUID')
     container_request = {
         'image': conf.get('image'),
-        'unit': os.environ['JUJU_UNIT_NAME'] 
+        'unit': os.environ['JUJU_UNIT_NAME']
     }
     log(container_request)
     username = conf.get('username')
@@ -67,6 +68,13 @@ def host_connected(dh_relation):
             return
         container_request['username'] = username
         container_request['secret'] = secret
+    ports = conf.get('ports')
+    if ports:
+        try:
+            container_request['ports'] = yaml.safe_load(ports)
+        except yaml.YAMLError:
+            status_set('blocked', 'YAMLError parsing ports config.')
+            return
 
     unitdata.kv().set('image', container_request)
     dh_relation.send_container_requests([container_request])
@@ -81,4 +89,3 @@ def image_running(dh_relation):
     if containers:
         status_set('active', 'Ready ({})'.format(conf.get('image')))
         set_state('docker-image.ready')
-

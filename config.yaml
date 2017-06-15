@@ -15,3 +15,14 @@ options:
     default: ""
     description: |
       When the image is behind a private repository, this is the secret to log into the docker repo.
+  ports:
+    type: string
+    default: ""
+    description: |
+      This field is interpreted as key-value yaml. These ports are used by the image.
+      The key is a port number while the value indicates whether the port should be exposed.
+      When no values are set, a random port is exposed.
+
+      Example usage:
+      8080: "expose"
+      8443: ""
