@@ -30,9 +30,9 @@ options:
     type: string
     default: ""
     description: |
-      Private Docker registry FQDN. Needed when deploying to Kubernetes and image is behind a private repository.
+      Private Docker registry FQDN. Needed when the image is behind a private repository.
   docker-email:
     type: string
     default: ""
     description: |
-      Docker email. Needed when deploying to Kubernetes and image is behind a private repository.
+      The email for the registry account. Needed when the image is behind a private repository.

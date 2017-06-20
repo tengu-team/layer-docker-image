@@ -61,15 +61,12 @@ def host_connected(dh_relation):
     log(container_request)
     username = conf.get('username')
     password = conf.get('password')
-    if username != '' or password != '':
-        if username == '':
-            status_set('blocked', 'If you provide a password, you should also specify the username.')
-            return
-        if password == '':
-            status_set('blocked', 'If you provide a username, you should also set the password.')
-            return
+    if username and password:
         container_request['username'] = username
         container_request['password'] = password
+    elif any([username, password]):
+        status_set('blocked', 'Provide full credentials (username, password) or none.')
+        return
     ports = conf.get('ports')
     if ports:
         try:
