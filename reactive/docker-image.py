@@ -55,8 +55,7 @@ def host_connected(dh_relation):
     container_request = {
         'image': conf.get('image'),
         'unit': os.environ['JUJU_UNIT_NAME'],
-        'docker-registry': conf.get('docker-registry'),
-        'docker-email': conf.get('docker-email')
+        'docker-registry': conf.get('docker-registry')
     }
     log(container_request)
     username = conf.get('username')

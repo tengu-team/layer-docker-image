@@ -31,8 +31,3 @@ options:
     default: ""
     description: |
       Private Docker registry FQDN. Needed when the image is behind a private repository.
-  docker-email:
-    type: string
-    default: ""
-    description: |
-      Email of the docker user. Needed when the image is behind a private repository.
