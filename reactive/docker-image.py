@@ -54,20 +54,18 @@ def host_connected(dh_relation):
     log('config.changed.image, generating new UUID')
     container_request = {
         'image': conf.get('image'),
-        'unit': os.environ['JUJU_UNIT_NAME']
+        'unit': os.environ['JUJU_UNIT_NAME'],
+        'docker-registry': conf.get('docker-registry')
     }
     log(container_request)
     username = conf.get('username')
-    secret = conf.get('secret')
-    if username != '' or secret != '':
-        if username == '':
-            status_set('blocked', 'If you provide a secret, you should also specify the username.')
-            return
-        if secret == '':
-            status_set('blocked', 'If you provide a username, you should also set the secret.')
-            return
+    password = conf.get('password')
+    if username and password:
         container_request['username'] = username
-        container_request['secret'] = secret
+        container_request['password'] = password
+    elif any([username, password]):
+        status_set('blocked', 'Provide full credentials (username, password) or none.')
+        return
     ports = conf.get('ports')
     if ports:
         try:
