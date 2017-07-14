@@ -37,7 +37,7 @@ def no_host_connected():
         'Please connect the application to a docker host.')
 
 
-@when('dockerhost.available')
+@when('dockerhost.available', 'docker-image.start')
 def host_connected(dh_relation):
     conf = hookenv.config()
     if conf.get('image') == "":
@@ -46,7 +46,8 @@ def host_connected(dh_relation):
             'Please provide the docker image.')
         remove_state('docker-image.ready')
         return
-    if not data_changed('image', conf.get('image')):
+    if (not data_changed('image', conf.get('image')) and
+       not data_changed('ports', conf.get('ports'))):
         print("Same, skipping")
         return
     print("Different")
@@ -57,7 +58,6 @@ def host_connected(dh_relation):
         'unit': os.environ['JUJU_UNIT_NAME'],
         'docker-registry': conf.get('docker-registry')
     }
-    log(container_request)
     username = conf.get('username')
     password = conf.get('password')
     if username and password:
@@ -74,9 +74,14 @@ def host_connected(dh_relation):
             status_set('blocked', 'YAMLError parsing ports config.')
             return
 
+    env_vars = unitdata.kv().get('docker-image-env')
+    if env_vars:
+        container_request['env'] = env_vars
+    log(container_request)
     unitdata.kv().set('image', container_request)
     dh_relation.send_container_requests([container_request])
     status_set('waiting', 'Waiting for docker to spin up image ({}).'.format(conf.get('image')))
+    remove_state('docker-image.send')
 
 
 @when('dockerhost.available')
